@@ -15,18 +15,17 @@
 - (void) fillWithAttributes: (NSDictionary *) attributes {
 	id t;
 	
-	t = [attributes valueForKeyPath:@"nome"];
+	t = attributes[@"nome"];
 	if (t != nil && ![t isKindOfClass:[NSNull class]])
 		self.nome = [t description];
 	
-	t = [attributes valueForKeyPath:@"marca"];
+	t = attributes[@"marca"];
 	if (t != nil && ![t isKindOfClass:[NSNull class]])
 		self.marca = [t description];
 	
-	t = [attributes valueForKeyPath:@"quantidade"];
+	t = attributes[@"quantidade"];
 	if (t != nil && ![t isKindOfClass:[NSNull class]])
 		self.quantidade = @([t integerValue]);
-	
 }
 
 
@@ -43,7 +42,6 @@
 }
 
 +(NSArray *) todosProdutos {
-	
 	AppDelegate *appDelegate = (AppDelegate *)UIApplication.sharedApplication.delegate;
 	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Produtos"];
 	NSError *error;
@@ -62,6 +60,27 @@
 	
 	NSArray *produtos = [appDelegate.persistentContainer.viewContext executeFetchRequest:request error:&error];
 	return [produtos firstObject];
+}
+
++(NSArray *) produtosComNome:(NSString *)nome {
+    
+    AppDelegate *appDelegate = (AppDelegate *)UIApplication.sharedApplication.delegate;
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"nome CONTAINS[cd] %@", nome];
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Produtos"];
+    [request setPredicate:predicate];
+    NSError *error;
+    
+    NSArray *produtos = [appDelegate.persistentContainer.viewContext executeFetchRequest:request error:&error];
+    return produtos;
+}
+
+
++(void) deleteProdutos:(Produtos *) prod {
+    AppDelegate *appDelegate = (AppDelegate *)UIApplication.sharedApplication.delegate;
+    [appDelegate.persistentContainer.viewContext deleteObject:prod];
+    NSError *error;
+    [appDelegate.persistentContainer.viewContext save:&error];
 }
 
 

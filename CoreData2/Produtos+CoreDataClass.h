@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 +(Produtos *)novoProduto:(NSDictionary *)elements;
 +(NSArray *) todosProdutos;
 +(Produtos *) produtoComNome:(NSString *)nome ;
++(void) deleteProdutos:(Produtos *) prod;
++(NSArray *) produtosComNome:(NSString *)nome;
 
 @end
 

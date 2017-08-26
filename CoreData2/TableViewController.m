@@ -112,17 +112,44 @@
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-	PhotoViewController *photoViewController = [self.storyboard instantiateViewControllerWithIdentifier: @"PhotoViewController"];
-	
-	photoViewController.prod = self.arrayProducts[indexPath.row];
-	
-	[self.navigationController pushViewController:photoViewController animated:YES];
-}
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Seleção" message:@"Deletar ou detalhar?" preferredStyle:UIAlertControllerStyleActionSheet];
 
+    UIAlertAction* deletarButton = [UIAlertAction actionWithTitle:@"Deletar"  style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        Produtos *p = self.arrayProducts[indexPath.row];
+        [Produtos deleteProdutos:p];
+        self.arrayProducts = [Produtos todosProdutos];
+        [self.tableView reloadData];
+    }];
+    
+    UIAlertAction* detalharButton = [UIAlertAction actionWithTitle:@"Detalhar"  style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        PhotoViewController *photoViewController = [self.storyboard instantiateViewControllerWithIdentifier: @"PhotoViewController"];
+        
+        photoViewController.prod = self.arrayProducts[indexPath.row];
+        
+        [self.navigationController pushViewController:photoViewController animated:YES];
+    }];
+                                          
+    [alertController addAction:deletarButton];
+    [alertController addAction:detalharButton];
+    
+    [self presentViewController:alertController animated:YES completion:nil];
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    NSLog(@"%@", searchText);
+    if (searchText.length == 0) {
+        self.arrayProducts = [Produtos todosProdutos];
+        [self.tableView reloadData];
+    } else {
+        self.arrayProducts = [Produtos produtosComNome:searchText];
+        [self.tableView reloadData];
+    }
 }
 
 /*
